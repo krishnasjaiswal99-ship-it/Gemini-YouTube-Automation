@@ -20,16 +20,16 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-
-      - name: 📦 Install dependencies and patch ImageMagick
-        run: |
-          
-          sudo apt-get install -y imagemagick ffmpeg
-          POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
-          if [ -z "$POLICY_FILE" ]; then
-            echo "❌ CRITICAL: Could not find ImageMagick's policy.xml file!"
-            exit 1
-          fi
+- name: Install dependencies and patch ImageMagick
+  run: |
+    sudo sed -i 's#http://azure.archive.ubuntu.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' /etc/apt/sources.list
+    sudo apt-get install -y imagemagick ffmpeg
+    POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
+    if [ -z "$POLICY_FILE" ]; then
+      echo "❌ CRITICAL: Could not find ImageMagick's policy.xml file!"
+      exit 1
+    fi
+  
           echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
           sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16384"\/>/' "$POLICY_FILE"
           sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16384"\/>/' "$POLICY_FILE"
