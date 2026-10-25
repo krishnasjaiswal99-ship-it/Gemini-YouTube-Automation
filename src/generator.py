@@ -49,7 +49,7 @@ def get_pexels_image(query, video_type):
         print(f"❌ Network error fetching Pexels image for query '{query}': {e}")
     except Exception as e:
         print(f"❌ General error fetching Pexels image for query '{query}': {e}")
-    return None
+     None
 
 
 def text_to_speech(text, output_path):
@@ -67,7 +67,7 @@ def text_to_speech(text, output_path):
         os.remove(temp_mp3_path)
 
         print(f"✅ Speech generated and converted to WAV successfully!")
-        return Path(wav_path)
+         Path(wav_path)
 
     except Exception as e:
         print(f"❌ ERROR: Failed to generate speech: {e}")
@@ -103,7 +103,7 @@ Each lesson object must have these keys: "chapter", "part", "title", "status" (d
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         curriculum = json.loads(json_string)
         print("✅ New curriculum generated successfully!")
-        return curriculum
+         curriculum
     except Exception as e:
         print(f"❌ CRITICAL ERROR: Failed to generate curriculum. {e}")
         raise
@@ -124,96 +124,96 @@ def generate_lesson_content(lesson_title):
         2. "short_form_highlight": A single, punchy, 1-2 sentence summary for a YouTube Short.
         3. "hashtags": A string of 5-7 relevant, space-separated hashtags for this lesson (e.g., "#GenerativeAI #LLM #Developer","#NeuralNetworks #BeginnerAI #AIforDevelopers").
 
-        Return only valid JSON.
+         only valid JSON.
         """
         response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         content = json.loads(json_string)
         print("✅ Lesson content generated successfully.")
-        return content
+         content
     except Exception as e:
         print(f"❌ ERROR: Failed to generate lesson content: {e}")
         raise
 
 
-# def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title=None, slide_number=0, total_slides=0):
-#     """Generates a single professional, PPT-style slide or a thumbnail."""
-#     output_dir.mkdir(exist_ok=True, parents=True)
-#     is_thumbnail = thumbnail_title is not None
+def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title=None, slide_number=0, total_slides=0):
+    """Generates a single professional, PPT-style slide or a thumbnail."""
+    output_dir.mkdir(exist_ok=True, parents=True)
+    is_thumbnail = thumbnail_title is not None
 
-#     width, height = (1920, 1080) if video_type == 'long' else (1080, 1920)
-#     title = thumbnail_title if is_thumbnail else slide_content.get("title", "")
-#     bg_image = get_pexels_image(title, video_type)
+    width, height = (1920, 1080) if video_type == 'long' else (1080, 1920)
+    title = thumbnail_title if is_thumbnail else slide_content.get("title", "")
+    bg_image = get_pexels_image(title, video_type)
 
-#     if not bg_image:
-#         bg_image = Image.new('RGBA', (width, height), color=(12, 17, 29))
-#     bg_image = bg_image.resize((width, height)).filter(ImageFilter.GaussianBlur(5))
-#     darken_layer = Image.new('RGBA', bg_image.size, (0, 0, 0, 150))
-#     final_bg = Image.alpha_composite(bg_image, darken_layer).convert("RGB")
-#     if is_thumbnail and video_type == 'long':
-#         w, h = final_bg.size
-#         if h > w:
-#             print("⚠️ Detected vertical thumbnail for long video. Rotating and resizing to 1920x1080...")
-#             final_bg = final_bg.transpose(Image.ROTATE_270).resize((1920, 1080))
-#     draw = ImageDraw.Draw(final_bg)
+    if not bg_image:
+        bg_image = Image.new('RGBA', (width, height), color=(12, 17, 29))
+    bg_image = bg_image.resize((width, height)).filter(ImageFilter.GaussianBlur(5))
+    darken_layer = Image.new('RGBA', bg_image.size, (0, 0, 0, 150))
+    final_bg = Image.alpha_composite(bg_image, darken_layer).convert("RGB")
+    if is_thumbnail and video_type == 'long':
+        w, h = final_bg.size
+        if h > w:
+            print("⚠️ Detected vertical thumbnail for long video. Rotating and resizing to 1920x1080...")
+            final_bg = final_bg.transpose(Image.ROTATE_270).resize((1920, 1080))
+    draw = ImageDraw.Draw(final_bg)
 
-#     try:
-#         title_font = ImageFont.truetype(str(FONT_FILE), 80 if video_type == 'long' else 90)
-#         content_font = ImageFont.truetype(str(FONT_FILE), 45 if video_type == 'long' else 55)
-#         footer_font = ImageFont.truetype(str(FONT_FILE), 25 if video_type == 'long' else 35)
-#     except IOError:
-#         title_font = content_font = footer_font = FALLBACK_THUMBNAIL_FONT
+    try:
+        title_font = ImageFont.truetype(str(FONT_FILE), 80 if video_type == 'long' else 90)
+        content_font = ImageFont.truetype(str(FONT_FILE), 45 if video_type == 'long' else 55)
+        footer_font = ImageFont.truetype(str(FONT_FILE), 25 if video_type == 'long' else 35)
+    except IOError:
+        title_font = content_font = footer_font = FALLBACK_THUMBNAIL_FONT
 
-#     if not is_thumbnail:
-#         header_height = int(height * 0.18)
-#         draw.rectangle([0, 0, width, header_height], fill=(25, 40, 65, 200))
-#         title_bbox = draw.textbbox((0, 0), title, font=title_font)
-#         title_x = (width - (title_bbox[2] - title_bbox[0])) / 2
-#         title_y = (header_height - (title_bbox[3] - title_bbox[1])) / 2
-#         draw.text((title_x, title_y), title, font=title_font, fill=(255, 255, 255))
-#     else:
-#         title_bbox = draw.textbbox((0, 0), title, font=title_font)
-#         title_x = (width - (title_bbox[2] - title_bbox[0])) / 2
-#         title_y = (height - (title_bbox[3] - title_bbox[1])) / 2
-#         draw.text((title_x, title_y), title, font=title_font, fill=(255, 255, 255), stroke_width=2, stroke_fill="black")
+    if not is_thumbnail:
+        header_height = int(height * 0.18)
+        draw.rectangle([0, 0, width, header_height], fill=(25, 40, 65, 200))
+        title_bbox = draw.textbbox((0, 0), title, font=title_font)
+        title_x = (width - (title_bbox[2] - title_bbox[0])) / 2
+        title_y = (header_height - (title_bbox[3] - title_bbox[1])) / 2
+        draw.text((title_x, title_y), title, font=title_font, fill=(255, 255, 255))
+    else:
+        title_bbox = draw.textbbox((0, 0), title, font=title_font)
+        title_x = (width - (title_bbox[2] - title_bbox[0])) / 2
+        title_y = (height - (title_bbox[3] - title_bbox[1])) / 2
+        draw.text((title_x, title_y), title, font=title_font, fill=(255, 255, 255), stroke_width=2, stroke_fill="black")
 
-#     if not is_thumbnail:
-#         content = slide_content.get("content", "")
-#         is_special_slide = len(content.split()) < 10
+    if not is_thumbnail:
+        content = slide_content.get("content", "")
+        is_special_slide = len(content.split()) < 10
 
-#         words = content.split()
-#         lines = []
-#         current_line = ""
-#         for word in words:
-#             test_line = f"{current_line} {word}".strip()
-#             if draw.textbbox((0, 0), test_line, font=content_font)[2] < width * 0.85:
-#                 current_line = test_line
-#             else:
-#                 lines.append(current_line)
-#                 current_line = word
-#         lines.append(current_line)
+        words = content.split()
+        lines = []
+        current_line = ""
+        for word in words:
+            test_line = f"{current_line} {word}".strip()
+            if draw.textbbox((0, 0), test_line, font=content_font)[2] < width * 0.85:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        lines.append(current_line)
 
-#         line_height = content_font.getbbox("A")[3] + 15
-#         total_text_height = len(lines) * line_height
-#         y_text = (height - total_text_height) / 2 if is_special_slide else header_height + 100
+        line_height = content_font.getbbox("A")[3] + 15
+        total_text_height = len(lines) * line_height
+        y_text = (height - total_text_height) / 2 if is_special_slide else header_height + 100
 
-#         for line in lines:
-#             line_bbox = draw.textbbox((0, 0), line, font=content_font)
-#             line_x = (width - (line_bbox[2] - line_bbox[0])) / 2
-#             draw.text((line_x, y_text), line, font=content_font, fill=(230, 230, 230))
-#             y_text += line_height
+        for line in lines:
+            line_bbox = draw.textbbox((0, 0), line, font=content_font)
+            line_x = (width - (line_bbox[2] - line_bbox[0])) / 2
+            draw.text((line_x, y_text), line, font=content_font, fill=(230, 230, 230))
+            y_text += line_height
 
-#         footer_height = int(height * 0.06)
-#         draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
-#         draw.text((40, height - footer_height + 12), f"AI for Developers by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
-#         if total_slides > 0:
-#             slide_num_text = f"Slide {slide_number} of {total_slides}"
-#             slide_num_bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
-#             draw.text((width - slide_num_bbox[2] - 40, height - footer_height + 12), slide_num_text, font=footer_font, fill=(180, 180, 180))
-#     file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
-#     path = output_dir / f"{file_prefix}.png"
-#     final_bg.save(path)
-#     return str(path)
+        footer_height = int(height * 0.06)
+        draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
+        draw.text((40, height - footer_height + 12), f"AI for Developers by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
+        if total_slides > 0:
+            slide_num_text = f"Slide {slide_number} of {total_slides}"
+            slide_num_bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
+            draw.text((width - slide_num_bbox[2] - 40, height - footer_height + 12), slide_num_text, font=footer_font, fill=(180, 180, 180))
+    file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
+    path = output_dir / f"{file_prefix}.png"
+    final_bg.save(path)
+    return str(path)
 
 def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title=None, slide_number=0, total_slides=0):
     """Generates a single professional, PPT-style slide or a thumbnail with corrected alignment."""
