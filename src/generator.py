@@ -104,7 +104,7 @@ Each lesson object must have these keys: "chapter", "part", "title", "status" (d
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         curriculum = json.loads(json_string)
         print("✅ New curriculum generated successfully!")
-         curriculum
+        return curriculum
     except Exception as e:
         print(f"❌ CRITICAL ERROR: Failed to generate curriculum. {e}")
         raise
