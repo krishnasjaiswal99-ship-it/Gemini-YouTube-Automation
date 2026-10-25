@@ -86,18 +86,19 @@ def generate_curriculum(previous_titles=None):
             history = f"The following lessons have already been created:\n{formatted}\n\nPlease continue from where this series left off.\n"
 
         prompt = f"""
-        You are an expert AI educator. Generate a curriculum for a YouTube series called 'AI for Developers by {YOUR_NAME}'.
-        {history}
-        The style must be: 'Assume the viewer is a beginner or non-technical person starting their journey into AI as a developer.
-        Use simple real-world analogies, relatable examples, and then connect to technical concepts.'
-
+        You are a creative children's storyteller. Generate a curriculum for a YouTube series called 'The Candy and Titu Show'. 
+{history}
+The style must be: 'Write gentle, fun, and engaging 3-minute stories for young children. The main characters are Candy (a curious 4-year-old girl) and Titu (her playful 2-year-old brother). Focus on everyday fun, sibling adventures, and simple moral lessons. The stories should be visually descriptive, family-friendly, and nostalgic enough to appeal to parents and grandparents too.'
+The curriculum must generate 10 story ideas.
+Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 10 lesson objects.
+Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
         The curriculum must guide a developer from absolute beginner to advanced AI, covering foundations like Generative AI, LLMs, Vector Databases, and Agentic AI...
         ...then continue into deep AI topics like Reinforcement Learning, Transformers internals, multi-agent systems, tool use, LangGraph, AI architecture, and more.
 
         Respond with ONLY a valid JSON object. The object must contain a key "lessons" which is a list of 20 lesson objects.
         Each lesson object must have these keys: "chapter", "part", "title", "status" (defaulted to "pending"), and "youtube_id" (defaulted to null).
         """
-        response = client.models.generate_content(model="gemini-3.5-flash-lite", contents=prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         curriculum = json.loads(json_string)
         print("✅ New curriculum generated successfully!")
@@ -124,7 +125,7 @@ def generate_lesson_content(lesson_title):
 
         Return only valid JSON.
         """
-        response = client.models.generate_content(model="gemini-3.5-flash-lite", contents=prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         content = json.loads(json_string)
         print("✅ Lesson content generated successfully.")
