@@ -299,7 +299,7 @@ def create_video(slide_paths, audio_paths, output_path, video_type):
         image_clips = []
         for i, (img_path, audio_path) in enumerate(zip(slide_paths, audio_paths)):
             if img_path is None or audio_path is None:
-            continue
+                continue
             audio_clip = AudioFileClip(str(audio_path))
             duration = audio_clip.duration + 0.5  # Padding
             img_clip = (
