@@ -1,68 +1,50 @@
 name: Autonomous AI Course Generator
 
 on:
-  schedule:
-    - cron: '0 7 * * *' # 12:30 PM IST daily
   workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    
     steps:
-      - name: ⬇️ Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
-- name: Install dependencies and patch ImageMagick
-  run: |
-    # Skipping apt-get update because GitHub servers have the tools pre-installed
-    POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
-    if [ -z "$POLICY_FILE" ]; then
-      echo "CRITICAL: Could not find ImageMagick policy.xml!"
-      exit 1
-    fi
-    echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
-    sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16KP"\/>/' $POLICY_FILE
-    sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16KP"\/>/' $POLICY_FILE
-    echo "--- Installing Python packages ---"
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-    echo "✅ Dependencies installed."
-          echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
-          sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16384"\/>/' "$POLICY_FILE"
-          sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16384"\/>/' "$POLICY_FILE"
 
-          echo "--- Installing Python packages ---"
+      - name: Install dependencies and patch ImageMagick
+        run: |
+          # Skip apt-get to prevent network timeouts
+          POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
+          if [ -n "$POLICY_FILE" ]; then
+            echo "Found policy file at: $POLICY_FILE, applying patches..."
+            sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16KP"\/>/' $POLICY_FILE
+            sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16KP"\/>/' $POLICY_FILE
+          fi
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          echo "✅ Dependencies installed."
 
-      - name: 🔑 Restore API credentials from base64
+      - name: Restore API credentials from base64
         run: |
           echo "${{ secrets.CLIENT_SECRET_B64 }}" | base64 -d > client_secrets.json
           echo "${{ secrets.CREDENTIALS_B64 }}" | base64 -d > credentials.json
-        shell: bash
 
-      - name: 🚀 Run Autonomous Production Pipeline
-        id: production-run
+      - name: Run Autonomous Production Pipeline
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python main.py
-        
 
-      - name: 💾 Commit and push content plan changes
-        if: steps.production-run.outcome == 'success'
+      - name: Commit and push content plan changes
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
           git add content_plan.json
-          git commit -m "feat: Update content plan after daily video production" || echo "No changes to commit"
+          git commit -m "Update content plan after daily video production" || echo "No changes to commit"
           git push
