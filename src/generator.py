@@ -116,7 +116,7 @@ def generate_lesson_content(lesson_title):
     try:
         client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
         prompt = f"""
-You are a creative children's storyteller. Write a gentle, fun, and engaging story for young children based on this title: {title}.
+You are a creative children's storyteller. Write a gentle, fun, and engaging story for young children based on this title: {lesson_title}.
 
 Break the story down into exactly 3 slides.
 
