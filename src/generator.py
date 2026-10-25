@@ -211,10 +211,10 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
             slide_num_text = f"Slide {slide_number} of {total_slides}"
             slide_num_bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
             draw.text((width - slide_num_bbox[2] - 40, height - footer_height + 12), slide_num_text, font=footer_font, fill=(180, 180, 180))
-    file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
-    path = output_dir / f"{file_prefix}.png"
-    final_bg.save(path)
-    return str(path)
+        file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
+        path = output_dir / f"{file_prefix}.png"
+        final_bg.save(path)
+        return str(path)
 
 def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title=None, slide_number=0, total_slides=0):
     """Generates a single professional, PPT-style slide or a thumbnail with corrected alignment."""
