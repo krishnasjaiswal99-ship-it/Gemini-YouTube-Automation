@@ -122,7 +122,7 @@ Break the story down into exactly 3 slides.
 
 Respond with ONLY a valid JSON object. Do not use Markdown formatting like ```json.
 The object must have a key "long_form_slides" which is a list of 3 objects.
-Each object in the list must have these keys: "title" (a short scene title) and "script" (the text to be spoken for that scene, about 2-3 sentences)
+Each object in the list must have these keys: "title" (a short scene title) and "content" (the text to be spoken for that scene, about 2-3 sentences)
          only valid JSON.
         """
         response = client.models.generate_content(model="gemini-3.5-flash-lite", contents=prompt)
