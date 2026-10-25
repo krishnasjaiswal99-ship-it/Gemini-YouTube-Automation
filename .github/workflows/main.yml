@@ -51,20 +51,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python main.py
-
-      - name: 🔎 Upload Audio Artifact for Debugging
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: audio-debug-files
-          path: output/*.wav
-
-      - name: 🎥 Upload Final Video for Debugging
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: final-videos
-          path: output/*.mp4
+        
 
       - name: 💾 Commit and push content plan changes
         if: steps.production-run.outcome == 'success'
