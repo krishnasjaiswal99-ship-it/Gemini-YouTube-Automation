@@ -22,14 +22,19 @@ jobs:
           cache: 'pip'
 - name: Install dependencies and patch ImageMagick
   run: |
-    sudo sed -i 's#http://azure.archive.ubuntu.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' /etc/apt/sources.list
-    sudo apt-get install -y imagemagick ffmpeg
+    # Skipping apt-get update because GitHub servers have the tools pre-installed
     POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
     if [ -z "$POLICY_FILE" ]; then
-      echo "❌ CRITICAL: Could not find ImageMagick's policy.xml file!"
+      echo "CRITICAL: Could not find ImageMagick policy.xml!"
       exit 1
     fi
-  
+    echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
+    sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16KP"\/>/' $POLICY_FILE
+    sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16KP"\/>/' $POLICY_FILE
+    echo "--- Installing Python packages ---"
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    echo "✅ Dependencies installed."
           echo "✅ Found policy file at: $POLICY_FILE, applying patches..."
           sudo sed -i 's/<policy domain="resource" name="width" value=".*"\/>/<policy domain="resource" name="width" value="16384"\/>/' "$POLICY_FILE"
           sudo sed -i 's/<policy domain="resource" name="height" value=".*"\/>/<policy domain="resource" name="height" value="16384"\/>/' "$POLICY_FILE"
