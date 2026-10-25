@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from pathlib import Path
 from pydub import AudioSegment
 
+from image_generator import generate_cartoon_image
 # --- Configuration ---
 ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
@@ -221,7 +222,11 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
 
     width, height = (1920, 1080) if video_type == 'long' else (1080, 1920)
     title = thumbnail_title if is_thumbnail else slide_content.get("title", "")
-    bg_image = get_pexels_image(title, video_type)
+    temp_img_path = output_dir / f"temp_cartoon_{slide_number}.jpg"
+if generate_cartoon_image(title, temp_img_path):
+    bg_image = Image.open(temp_img_path)
+else:
+    bg_image = None
 
     if not bg_image:
         bg_image = Image.new('RGBA', (width, height), color=(12, 17, 29))
