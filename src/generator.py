@@ -323,10 +323,10 @@ else:
             bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
             draw.text((width - bbox[2] - 40, height - footer_height + 12), slide_num_text, font=footer_font, fill=(180, 180, 180))
 
-    file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
-    path = output_dir / f"{file_prefix}.png"
-    final_bg.save(path)
-    return str(path)
+        file_prefix = "thumbnail" if is_thumbnail else f"slide_{slide_number:02d}"
+        path = output_dir / f"{file_prefix}.png"
+        final_bg.save(path)
+        return str(path)
 
 def create_video(slide_paths, audio_paths, output_path, video_type):
     """Creates a final video from slides and per-slide audio clips with optional background music."""
