@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from pathlib import Path
 from pydub import AudioSegment
 
-from image_generator import generate_cartoon_image
+from src.image_generator import generate_cartoon_image
 # --- Configuration ---
 ASSETS_PATH = Path("assets")
 FONT_FILE = ASSETS_PATH / "fonts/arial.ttf"
