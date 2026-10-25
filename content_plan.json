@@ -1,10 +1,9 @@
 [
   {
-    "topic": "A little bunny who learns to share his carrots",
-    "status": "pending"
-  },
-  {
-    "topic": "A brave little train who is scared of the dark",
-    "status": "pending"
+    "chapter": 1,
+    "part": 1,
+    "title": "Candy and Titu's Magical Pillow Fort",
+    "status": "pending",
+    "youtube_id": null
   }
 ]
