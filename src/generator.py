@@ -131,7 +131,7 @@ def generate_lesson_content(lesson_title):
         json_string = response.text.strip().replace("```json", "").replace("```", "")
         content = json.loads(json_string)
         print("✅ Lesson content generated successfully.")
-         content
+        content
     except Exception as e:
         print(f"❌ ERROR: Failed to generate lesson content: {e}")
         raise
