@@ -68,7 +68,7 @@ def text_to_speech(text, output_path):
         os.remove(temp_mp3_path)
 
         print(f"✅ Speech generated and converted to WAV successfully!")
-         Path(wav_path)
+        Path(wav_path)
 
     except Exception as e:
         print(f"❌ ERROR: Failed to generate speech: {e}")
