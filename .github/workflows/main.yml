@@ -23,7 +23,7 @@ jobs:
 
       - name: 📦 Install dependencies and patch ImageMagick
         run: |
-          sudo apt-get update
+          
           sudo apt-get install -y imagemagick ffmpeg
           POLICY_FILE=$(find /etc -name "policy.xml" 2>/dev/null | grep -i "ImageMagick" | head -n 1)
           if [ -z "$POLICY_FILE" ]; then
