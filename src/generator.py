@@ -49,7 +49,7 @@ def get_pexels_image(query, video_type):
         print(f"❌ Network error fetching Pexels image for query '{query}': {e}")
     except Exception as e:
         print(f"❌ General error fetching Pexels image for query '{query}': {e}")
-     None
+             None
 
 
 def text_to_speech(text, output_path):
