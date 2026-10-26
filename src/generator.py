@@ -298,20 +298,27 @@ def create_video(slide_paths, audio_paths, output_path, video_type):
         if not slide_paths or not audio_paths or len(slide_paths) != len(audio_paths):
             raise ValueError("Mismatch between slides and audio clips, or no slides provided.")
 
-        image_clips = []
-        for i, (img_path, audio_path) in enumerate(zip(slide_paths, audio_paths)):
-            if img_path is None or audio_path is None:
-                continue
-            audio_clip = AudioFileClip(str(audio_path))
-            duration = audio_clip.duration + 0.5  # Padding
-            img_clip = (
-                ImageClip(img_path)
-                .set_duration(duration)
-                .set_audio(audio_clip)
-                .fadein(0.5)
-                .fadeout(0.5)
-            )
-            image_clips.append(img_clip)
+       image_clips = []
+for i, (img_path, audio_path) in enumerate(zip(slide_paths, audio_paths)):
+    if img_path is None or audio_path is None:
+        continue
+        
+    audio_clip = AudioFileClip(str(audio_path))
+    duration = audio_clip.duration + 0.5
+    img_clip = (
+        ImageClip(str(img_path))
+        .set_duration(duration)
+        .set_audio(audio_clip)
+        .fadein(0.5)
+        .fadeout(0.5)
+    )
+    image_clips.append(img_clip)
+
+# SAFETY NET: If list is somehow empty, use a black screen so it doesn't crash
+if not image_clips:
+    print("⚠️ Warning: No valid images found. Using a black screen fallback.")
+    from moviepy.editor import ColorClip
+    image_clips.append(ColorClip(size=(1920, 1080), color=(0, 0, 0), duration=5.0))
 
         final_video = concatenate_videoclips(image_clips, method="compose")
 
