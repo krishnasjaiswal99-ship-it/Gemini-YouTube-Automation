@@ -292,61 +292,58 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     return str(path)
 
 def create_video(slide_paths, audio_paths, output_path, video_type):
-    """Creates a final video from slides and per-slide audio clips with optional background music."""
+    """Creates a final video from slides and per-slide audio clips."""
     print(f"🎬 Creating {video_type} video...")
     try:
         if not slide_paths or not audio_paths or len(slide_paths) != len(audio_paths):
             raise ValueError("Mismatch between slides and audio clips, or no slides provided.")
 
-    image_clips = []
-    for i, (img_path, audio_path) in enumerate(zip(slide_paths, audio_paths)):
-        if img_path is None or audio_path is None:
-        continue
-        
-    audio_clip = AudioFileClip(str(audio_path))
-    duration = audio_clip.duration + 0.5
-    img_clip = (
-        ImageClip(str(img_path))
-        .set_duration(duration)
-        .set_audio(audio_clip)
-        .fadein(0.5)
-        .fadeout(0.5)
-    )
-    image_clips.append(img_clip)
+        image_clips = []
+        for i, (img_path, audio_path) in enumerate(zip(slide_paths, audio_paths)):
+            if img_path is None or audio_path is None:
+                continue
+                
+            audio_clip = AudioFileClip(str(audio_path))
+            duration = audio_clip.duration + 0.5
+            
+            # Use the image and add the audio to it
+            img_clip = (
+                ImageClip(str(img_path))
+                .set_duration(duration)
+                .set_audio(audio_clip)
+                .fadein(0.5)
+                .fadeout(0.5)
+            )
+            image_clips.append(img_clip)
 
-# SAFETY NET: If list is somehow empty, use a black screen so it doesn't crash
-if not image_clips:
-    print("⚠️ Warning: No valid images found. Using a black screen fallback.")
-    from moviepy.editor import ColorClip
-    image_clips.append(ColorClip(size=(1920, 1080), color=(0, 0, 0), duration=5.0))
+        # SAFETY NET: If no valid images, use a black screen
+        if not image_clips:
+            print("⚠️ Warning: No valid images found. Generating fallback black screen.")
+            from moviepy.editor import ColorClip
+            image_clips.append(ColorClip(size=(1920, 1080), color=(0, 0, 0), duration=5.0))
 
+        # Combine all clips
         final_video = concatenate_videoclips(image_clips, method="compose")
-
+        
+        # Add background music if it exists
         if BACKGROUND_MUSIC_PATH.exists():
-            print("🎵 Adding background music...")
-            bg_music = AudioFileClip(str(BACKGROUND_MUSIC_PATH)).volumex(0.05)
-            if bg_music.duration < final_video.duration:
-                bg_music = bg_music.fx(vfx.loop, duration=final_video.duration)
-            else:
-                bg_music = bg_music.subclip(0, final_video.duration)
-
-            composite_audio = CompositeAudioClip([
-                final_video.audio.volumex(1.2),
-                bg_music
-            ])
-            final_video = final_video.set_audio(composite_audio)
-
+            try:
+                bg_music = AudioFileClip(str(BACKGROUND_MUSIC_PATH)).volumex(0.1)
+                final_video = final_video.set_audio(CompositeAudioClip([final_video.audio, bg_music]))
+            except Exception as e:
+                print(f"⚠️ Could not add background music: {e}")
+        
+        # Write the final video file
         final_video.write_videofile(
-            str(output_path),
-            fps=24,
-            codec="libx264",
-            audio_codec="aac",
-            audio_bitrate="192k",
-            preset="medium",
-            threads=4
+            str(output_path), 
+            fps=24, 
+            codec="libx264", 
+            audio_codec="aac"
         )
-        print(f"✅ {video_type.capitalize()} video created successfully!")
+        
+        print(f"✅ Video successfully created at: {output_path}")
+        return str(output_path)
 
     except Exception as e:
         print(f"❌ ERROR during video creation: {e}")
-        raise
+        return None
