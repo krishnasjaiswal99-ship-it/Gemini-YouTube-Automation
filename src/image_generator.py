@@ -1,23 +1,25 @@
-import requests
-import urllib.parse
+import shutil
+import os
 
 def generate_cartoon_image(prompt, output_path):
-    # This locks in the look of Candy and Titu
-    character_base = "A cute 2D cartoon illustration for kids. Candy is a 4-year-old girl with a red bow and yellow dress. Titu is a 2-year-old boy with a blue t-shirt and brown shorts. "
-    full_prompt = character_base + prompt + ", children's book style, vibrant colors, flat vector art, simple background."
+    assets_dir = "assets"
+    # Sort the images by number (1.jpg, 2.jpg, etc.)
+    image_files = sorted([f for f in os.listdir(assets_dir) if f.endswith(('.jpg', '.png', '.jpeg'))], key=lambda x: int(''.join(filter(str.isdigit, x)) or 0))
     
-    encoded_prompt = urllib.parse.quote(full_prompt)
-    # seed=42 keeps the characters looking exactly the same every time
-    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?seed=42&width=1920&height=1080&nologo=true"
-    
-    print(f"Generating image for: {prompt}")
+    if not image_files:
+        print("❌ No images found in assets folder!")
+        return False
+        
     try:
-        response = requests.get(url, timeout=30)
-        if response.status_code == 200:
-            with open(output_path, 'wb') as f:
-                f.write(response.content)
-            print(f"✅ Image saved: {output_path}")
-            return True
+        # Extract slide number from the path (e.g., temp_cartoon_1.jpg -> 1)
+        slide_num = int(str(output_path).split('_')[-1].split('.')[0])
+        # Pick an image from your folder
+        selected_image = image_files[(slide_num - 1) % len(image_files)]
+        source_path = os.path.join(assets_dir, selected_image)
+        
+        shutil.copy(source_path, output_path)
+        print(f"✅ Using local image {selected_image} for: {prompt}")
+        return True
     except Exception as e:
-        print(f"❌ Error: {e}")
-    return False
+        print(f"❌ Error selecting local image: {e}")
+        return False
