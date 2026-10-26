@@ -146,7 +146,8 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
 
     if not bg_image:
         bg_image = Image.new('RGBA', (width, height), color=(12, 17, 29))
-    bg_image = bg_image.resize((width, height)).filter(ImageFilter.GaussianBlur(5))
+    bg_image = bg_image.convert("RGB").resize((width, height))
+    bg_image = bg_image.filter(ImageFilter.GaussianBlur(5))
     darken_layer = Image.new('RGBA', bg_image.size, (0, 0, 0, 150))
     bg_image = bg_image.convert("RGBA")
     final_bg = Image.alpha_composite(bg_image, darken_layer).convert("RGB")
@@ -232,7 +233,8 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     if not bg_image:
         bg_image = Image.new('RGBA', (width, height), color=(12, 17, 29))
         
-    bg_image = bg_image.resize((width, height)).filter(ImageFilter.GaussianBlur(5))
+    bg_image = bg_image.convert("RGB").resize((width, height))
+    bg_image = bg_image.filter(ImageFilter.GaussianBlur(5))
     darken_layer = Image.new('RGBA', bg_image.size, (0, 0, 0, 150))
     bg_image = bg_image.convert("RGBA")
     final_bg = Image.alpha_composite(bg_image, darken_layer).convert("RGB")
