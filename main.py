@@ -97,7 +97,7 @@ def produce_lesson_videos(lesson):
 
     print("\n--- Producing Short Video ---")
     # short_script = f"{lesson_content['short_form_highlight']}"
-    short_script = (f"{lesson_content['short_form_highlight']}\n\n"
+    short_script = (f"{lesson_content.get('short_form_highlight', 'Watch this fun story!')}\n\n"
     f"Link to the full lesson is in the description below.")
     short_audio_mp3_path = OUTPUT_DIR / f"short_audio_{unique_id}.mp3"
     short_audio_path = text_to_speech(short_script, short_audio_mp3_path)
