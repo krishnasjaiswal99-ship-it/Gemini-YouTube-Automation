@@ -164,7 +164,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     except IOError:
         title_font = content_font = footer_font = FALLBACK_THUMBNAIL_FONT
 
-    if not is_thumbnail:
+    if False:
         header_height = int(height * 0.18)
         draw.rectangle([0, 0, width, header_height], fill=(25, 40, 65, 200))
         title_bbox = draw.textbbox((0, 0), title, font=title_font)
@@ -177,7 +177,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
         title_y = (height - (title_bbox[3] - title_bbox[1])) / 2
         draw.text((title_x, title_y), title, font=title_font, fill=(255, 255, 255), stroke_width=2, stroke_fill="black")
 
-    if not is_thumbnail:
+    if False:
         content = slide_content.get("content", "")
         is_special_slide = len(content.split()) < 10
 
@@ -252,7 +252,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     elif is_thumbnail:
         lines = title.split('\n')
 
-    if not is_thumbnail:
+    if False:
         content_font = ImageFont.truetype(str(FONT_FILE), 60)
         header_height = int(height * 0.15)
         
