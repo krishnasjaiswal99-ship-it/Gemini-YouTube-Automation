@@ -105,7 +105,7 @@ def produce_lesson_videos(lesson):
     short_slide_dir = OUTPUT_DIR / f"slides_short_{unique_id}"
     short_slide_content = {
         "title": "Quick Tip!",
-        "content": f"{lesson_content['short_form_highlight']}\n\n#AI for developers by chaitanya"
+        "content": f"{lesson_content.get['short_form_highlight','Watch this fun video!')}\n\n#CandyAndTitu #KidsStories"
     }
     short_slide_path = generate_visuals(
         output_dir=short_slide_dir,
