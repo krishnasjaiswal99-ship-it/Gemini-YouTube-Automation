@@ -68,7 +68,7 @@ def text_to_speech(text, output_path):
         os.remove(temp_mp3_path)
 
         print(f"✅ Speech generated and converted to WAV successfully!")
-        Path(wav_path)
+        return str(wav_path)
 
     except Exception as e:
         print(f"❌ ERROR: Failed to generate speech: {e}")
@@ -280,7 +280,7 @@ def generate_visuals(output_dir, video_type, slide_content=None, thumbnail_title
     footer_height = int(height * 0.06)
     draw.rectangle([0, height - footer_height, width, height], fill=(25, 40, 65, 200))
     draw.text((40, height - footer_height + 12), f"AI for Developers by {YOUR_NAME}", font=footer_font, fill=(180, 180, 180))
-    
+    f"Candy and Titu"
     if total_slides > 0:
         slide_num_text = f"Slide {slide_number} of {total_slides}"
         bbox = draw.textbbox((0, 0), slide_num_text, font=footer_font)
